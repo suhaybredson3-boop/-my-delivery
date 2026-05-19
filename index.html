@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MY DELIVERY - Multi-Vendor System</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f4f6f8; color: #333; padding-bottom: 60px; }
+        .app-container { max-width: 450px; margin: 0 auto; background: #ffffff; min-height: 100vh; position: relative; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        
+        /* Brand Header */
+        .app-header { background: #0a1931; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; border-bottom: 2px solid #ffc107; }
+        .app-header h2 { font-size: 18px; font-weight: bold; color: #ffc107; letter-spacing: 1px; }
+        .cart-icon { position: relative; cursor: pointer; font-size: 20px; }
+        .cart-count { position: absolute; top: -8px; right: -10px; background: red; color: white; font-size: 10px; padding: 2px 6px; border-radius: 50%; font-weight: bold; }
+
+        /* Banner */
+        .promo-banner { margin: 12px; background: linear-gradient(135deg, #111, #2c2512); border-radius: 12px; padding: 20px; color: #ffc107; border: 1px solid #ffc107; }
+        .promo-banner h3 { font-size: 22px; font-weight: 900; }
+        .promo-banner p { font-size: 12px; color: #eee; margin-top: 5px; }
+
+        /* Titles */
+        .section-title { font-size: 14px; font-weight: bold; padding: 10px 12px; color: #111; text-transform: uppercase; }
+
+        /* Categories */
+        .categories-grid { display: flex; gap: 12px; overflow-x: auto; padding: 0 12px 10px 12px; scrollbar-width: none; }
+        .category-item { text-align: center; flex: 0 0 75px; cursor: pointer; }
+        .category-circle { width: 55px; height: 55px; background: #f8f9fa; border-radius: 50%; margin: 0 auto 6px auto; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid #ddd; }
+        .category-item p { font-size: 11px; font-weight: 600; color: #555; }
+
+        /* Product Grid (Buyer View) */
+        .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 12px; }
+        .product-card { background: white; border: 1px solid #eef1f4; border-radius: 12px; padding: 10px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .product-card img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; }
+        .prod-title { font-size: 13px; font-weight: bold; margin-top: 8px; }
+        .prod-price { color: #2ecc71; font-weight: bold; font-size: 14px; margin-top: 4px; }
+        .btn-add-cart { width: 100%; background: #0a1931; color: white; border: none; padding: 8px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-top: 8px; cursor: pointer; }
+
+        /* Seller Dashboard */
+        .seller-page { padding: 15px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; }
+        .btn-submit { width: 100%; background: #212529; color: #ffc107; border: 1px solid #ffc107; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+
+        /* Orders List (Seller Sees This) */
+        .order-card { background: #fffdf3; border: 1px solid #f1e4be; border-left: 4px solid #ffc107; padding: 12px; border-radius: 6px; margin-bottom: 10px; font-size: 13px; }
+        .order-row { margin-bottom: 4px; }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: #ffffff; border-top: 1px solid #eee; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
+        .nav-item { text-align: center; color: #777; cursor: pointer; font-size: 11px; font-weight: 600; flex: 1; }
+        .nav-item.active { color: #0a1931; }
+        .nav-item span { display: block; font-size: 18px; }
+
+        /* Views Visibility */
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="app-header">
+        <h2>MY DELIVERY</h2>
+        <div class="cart-icon" onclick="switchView('cart')">
+            🛒 <span class="cart-count" id="cartCount">0</span>
+        </div>
+    </div>
+
+    <div id="homeView" class="view-section active">
+        <div class="promo-banner">
+            <h3>MY DELIVERY SUUQ</h3>
+            <p>Ka dhex adeego alaabta ay soo geliyeen iibiyayaasha dalka.</p>
+        </div>
+
+        <div class="section-title">Qaybaha Alaabta</div>
+        <div class="categories-grid">
+            <div class="category-item"><div class="category-circle">👔</div><p>Dharka</p></div>
+            <div class="category-item"><div class="category-circle">🍳</div><p>Maacuunta</p></div>
+            <div class="category-item"><div class="category-circle">📱</div><p>Aaladaha</p></div>
+            <div class="category-item"><div class="category-circle">🍔</div><p>Cuntada</p></div>
+        </div>
+
+        <div class="section-title">Alaabta Taala Suuqa</div>
+        <div class="products-grid" id="buyerStoreGrid">
+            </div>
+    </div>
+
+    <div id="cartView" class="view-section" style="padding: 15px;">
+        <h3 style="margin-bottom: 15px;">Gariiradda Wax-Iibsiga</h3>
+        <div id="cartList"></div>
+        <div style="margin-top: 20px; background: #f8f9fa; padding: 15px; border-radius: 8px;">
+            <p style="display: flex; justify-content: space-between; font-weight: bold;"><span>Total:</span> <span id="cartTotal">$0.00</span></p>
+            <button class="btn-submit" style="background:#0a1931; color:white; margin-top:15px;" onclick="placeOrder()">Xaqiiji Dalabka (Order Now)</button>
+        </div>
+    </div>
+
+    <div id="sellerView" class="view-section">
+        <div class="seller-page">
+            <h3 style="margin-bottom: 15px;">Qaybta Iibiyaha (Seller)</h3>
+            
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+                <h4 style="margin-bottom: 10px; color:#0a1931;">Soo Geli Alaab Cusub</h4>
+                <div class="form-group">
+                    <label>Magaca Alaabta</label>
+                    <input type="text" id="prodTitle" placeholder="Tusaale: Shaadh cad, Digsi weyn">
+                </div>
+                <div class="form-group">
+                    <label>Qiimaha ($)</label>
+                    <input type="number" id="prodPrice" placeholder="Tusaale: 15">
+                </div>
+                <div class="form-group">
+                    <label>Sawirka Alaabta</label>
+                    <input type="file" accept="image/*" onchange="encodeImage(this)">
+                </div>
+                <button class="btn-submit" onclick="sellerUpload()">Faafi Alaabta</button>
+            </div>
+
+            <h4 style="margin-bottom: 10px; color: #d39e00;">📋 Dalabaadka laguu soo diray (Orders)</h4>
+            <div id="sellerOrdersContainer">
+                </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" id="nav-home" onclick="switchView('home')"><span>🏠</span>Suuqa</div>
+        <div class="nav-item" id="nav-cart" onclick="switchView('cart')"><span>🛒</span>Cart</div>
+        <div class="nav-item" id="nav-seller" onclick="switchView('seller')"><span>🧑‍💼</span>Iibiye</div>
+    </div>
+</div>
+
+<script>
+    let uploadedImgBase64 = "https://via.placeholder.com/150";
+    let tempCart = [];
+
+    function encodeImage(input) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onloadend = function() { uploadedImgBase64 = reader.result; }
+        if (file) { reader.readAsDataURL(file); }
+    }
+
+    function switchView(view) {
+        document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        
+        if(view === 'home') { document.getElementById('homeView').classList.add('active'); document.getElementById('nav-home').classList.add('active'); loadMarket(); }
+        if(view === 'cart') { document.getElementById('cartView').classList.add('active'); document.getElementById('nav-cart').classList.add('active'); loadCart(); }
+        if(view === 'seller') { document.getElementById('sellerView').classList.add('active'); document.getElementById('nav-seller').classList.add('active'); loadOrders(); }
+    }
+
+    // Iibiyaha ayaa wax soo gelinaya
+    function sellerUpload() {
+        const title = document.getElementById('prodTitle').value;
+        const price = document.getElementById('prodPrice').value;
+
+        if(!title || !price) { alert("Fadlan buuxi meelaha madhan!"); return; }
+
+        let currentProducts = JSON.parse(localStorage.getItem('shared_products')) || [];
+        currentProducts.push({ id: Date.now(), title, price, img: uploadedImgBase64 });
+        localStorage.setItem('shared_products', JSON.stringify(currentProducts));
+
+        alert("Alaabtaada waa la faafiyey!");
+        document.getElementById('prodTitle').value = "";
+        document.getElementById('prodPrice').value = "";
+        switchView('home');
+    }
+
+    // Macmiilka ayaa suuqqa ka arkaya
+    function loadMarket() {
+        const products = JSON.parse(localStorage.getItem('shared_products')) || [];
+        const grid = document.getElementById('buyerStoreGrid');
+        grid.innerHTML = "";
+
+        if(products.length === 0) {
+            grid.innerHTML = `<p style="grid-column:1/3; text-align:center; color:#888; padding:20px; font-size:12px;">Weli wax alaab ah lama soo gelin suuqqa.</p>`;
+            return;
+        }
+
+        products.forEach(p => {
+            grid.innerHTML += `
+                <div class="product-card">
+                    <img src="${p.img}">
+                    <div class="prod-title">${p.title}</div>
+                    <div class="prod-price">$${p.price}</div>
+                    <button class="btn-add-cart" onclick="addToCart(${p.id}, '${p.title}', ${p.price})">Ku dar Cart</button>
+                </div>
+            `;
+        });
+    }
+
+    function addToCart(id, title, price) {
+        tempCart.push({ id, title, price });
+        document.getElementById('cartCount').innerText = tempCart.length;
+    }
+
+    function loadCart() {
+        const list = document.getElementById('cartList');
+        list.innerHTML = "";
+        let total = 0;
+
+        tempCart.forEach(item => {
+            total += parseFloat(item.price);
+            list.innerHTML += `
+                <div style="display:flex; justify-content:between; padding:10px 0; border-bottom:1px solid #eee; font-size:13px;">
+                    <span style="flex:1;">✅ ${item.title}</span>
+                    <strong>$${item.price}</strong>
+                </div>
+            `;
+        });
+        document.getElementById('cartTotal').innerText = `$${total.toFixed(2)}`;
+    }
+
+    // Macmiilka ayaa dalbanaya (Order)
+    function placeOrder() {
+        if(tempCart.length === 0) { alert("Cart-kaagu waa madhan yahay!"); return; }
+
+        let currentOrders = JSON.parse(localStorage.getItem('shared_orders')) || [];
+        
+        tempCart.forEach(item => {
+            currentOrders.push({
+                orderId: Date.now(),
+                title: item.title,
+                price: item.price,
+                status: 'Cusub'
+            });
+        });
+
+        localStorage.setItem('shared_orders', JSON.stringify(currentOrders));
+        alert("Dalabkaaga si guul leh ayaa loogu diray Iibiyaha!");
+        tempCart = [];
+        document.getElementById('cartCount').innerText = "0";
+        switchView('home');
+    }
+
+    // Iibiyaha ayaa ka arkaya bogga "Iibiye" waxa loo soo dalbaday
+    function loadOrders() {
+        const orders = JSON.parse(localStorage.getItem('shared_orders')) || [];
+        const container = document.getElementById('sellerOrdersContainer');
+        container.innerHTML = "";
+
+        if(orders.length === 0) {
+            container.innerHTML = `<p style="text-align:center; color:#888; padding:20px; font-size:12px;">Hadda wax dalabaad ah oo laguu soo diray ma jiraan.</p>`;
+            return;
+        }
+
+        orders.forEach(o => {
+            container.innerHTML += `
+                <div class="order-card">
+                    <div class="order-row"><strong>Alaabta:</strong> ${o.title}</div>
+                    <div class="order-row"><strong>Qiimaha:</strong> $${o.price}</div>
+                    <div class="order-row"><strong>Status:</strong> <span style="color:green; font-weight:bold;">${o.status}</span></div>
+                </div>
+            `;
+        });
+    }
+
+    // Bilaabidda hore
+    loadMarket();
+</script>
+</body>
+</html>
